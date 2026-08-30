@@ -1,0 +1,84 @@
+Created At: 2026-06-19T15:38:56Z
+Completed At: 2026-06-19T15:38:56Z
+File Path: `file:///Users/akshay/Documents/Build/FitApp/fitapp/app/%28tabs%29/challenges.tsx`
+Total Lines: 1445
+Total Bytes: 71597
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import { useState, useEffect } from 'react';
+2: import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Modal, ActivityIndicator, Alert, TextInput } from 'react-native';
+3: import { SafeAreaView } from 'react-native-safe-area-context';
+4: import { Ionicons } from '@expo/vector-icons';
+5: import * as Haptics from 'expo-haptics';
+6: import { colors } from '../../constants/colors';
+7: import { supabase } from '../../lib/supabase';
+8: 
+9: // Interfaces for UI Data Models
+10: interface UserProfile {
+11:   id: string;
+12:   name: string;
+13:   username: string;
+14:   level: number;
+15:   goal: string;
+16:   xp?: number;
+17: }
+18: 
+19: interface Duel {
+20:   id: string;
+21:   challenger_id: string;
+22:   opponent_id: string;
+23:   type: string;
+24:   start_date: string;
+25:   end_date: string;
+26:   status: 'PENDING' | 'ACTIVE' | 'COMPLETED' | 'FORFEITED';
+27:   winner_id: string | null;
+28:   challenger_progress: number;
+29:   opponent_progress: number;
+30:   challenger_username?: string;
+31:   opponent_username?: string;
+32: }
+33: 
+34: interface ChallengeV2 {
+35:   id: string;
+36:   type: 'weekly' | 'monthly';
+37:   template_key: string;
+38:   title: string;
+39:   description: string;
+40:   metric: string;
+41:   target_value: number;
+42:   xp_reward: number;
+43:   start_date: string;
+44:   end_date: string;
+45:   status: 'ACTIVE' | 'DISABLED' | 'ARCHIVED' | 'COMPLETED';
+46: }
+47: 
+48: interface ParticipationV2 {
+49:   id: string;
+50:   challenge_id: string;
+51:   user_id: string;
+52:   status: 'ACTIVE' | 'COMPLETED' | 'LEFT' | 'EXPIRED' 
+<truncated 37484 bytes>
+           <View style={{ gap: 10, marginTop: 8 }}>
+779:                       {weeklyParticipations
+780:                         .filter(p => p.status === 'LEFT' || p.status === 'COMPLETED' || p.status === 'EXPIRED' || p.status === 'INELIGIBLE_COMPLETED' || p.status === 'INELIGIBLE_EXPIRED' || p.challenge?.status !== 'ACTIVE')
+781:                         .map(p => {
+782:                           const isLeft = p.status === 'LEFT';
+783:                           const isCompleted = p.status === 'COMPLETED';
+784:                           const isPracticeCompleted = p.status === 'INELIGIBLE_COMPLETED';
+785:                           
+786:                           return (
+787:                             <View key={p.id} style={[styles.duelCard, { opacity: 0.7 }]}>
+788:                               <View style={styles.duelCardHeader}>
+789:                                 <Text style={styles.duelMetric}>{p.challenge?.title}</Text>
+790:                                 <Text style={[
+791:                                   styles.resultBadge,
+792:                                   isCompleted ? styles.winText : isPracticeCompleted ? styles.drawText : isLeft ? styles.lossText : styles.lossText
+793:                                 ]}>
+794:                                   {isCompleted ? '🏆 COMPLETED' : isPracticeCompleted ? '🏃 PRACTICE COMPLETED' : isLeft ? '🚪 LEFT' : '❌ EXPIRED'}
+795:                                 </Text>
+796:                               </View>
+797:                               <Text style={styles.historyScores}>
+798:                                 Progress: {p.progress_value} / {p.challenge?.target_value}  •  {new Date(p.challenge?.end_date || '').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+799:                               </Text>
+800:                             </View>
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

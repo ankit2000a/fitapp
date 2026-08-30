@@ -1,0 +1,13 @@
+{
+  "name": "vertex-proxy",
+  "version": "1.0.0",
+  "description": "Proxy for Google Cloud Vertex AI using Application Default Credentials",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google-cloud/vertexai": "^1.1.0",
+    "express": "^4.19.2"
+  }
+}

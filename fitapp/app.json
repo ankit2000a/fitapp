@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "FitApp",
+    "slug": "fitapp",
+    "scheme": "fitapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#1C1C1E"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fitapp.app",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "FitApp reads your activity, sleep, and heart rate to calculate your Health Score",
+        "NSHealthUpdateUsageDescription": "FitApp saves your logged workouts"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#111113",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-web-browser",
+      "expo-sharing",
+      "expo-mail-composer",
+      "expo-font",
+      [
+        "react-native-health",
+        {
+          "healthSharePermission": "Allow FitApp to read your health data to calculate your daily score",
+          "healthUpdatePermission": "Allow FitApp to save your workouts"
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.660838701020-2cfi0a6b1n4olcqaef3q09j44962eqjc"
+        }
+      ]
+    ]
+  }
+}

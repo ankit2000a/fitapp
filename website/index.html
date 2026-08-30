@@ -1,0 +1,2844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>FitApp</title>
+  <meta name="description"
+    content="Track your food, compete with friends, and get roasted by AI for your life choices. The fitness app that actually knows you.">
+
+  <!-- Favicon (Egg Logo) -->
+  <link rel="shortcut icon" type="image/png" href="favicon.png?v=2">
+  <link rel="icon" type="image/png" href="favicon.png?v=2">
+
+  <!-- Google Fonts (Inter Variable) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Icon Libraries -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    /* ---------------------------------- */
+    /* 1. DESIGN SYSTEM & RESET           */
+    /* ---------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      /* Colors from app colors.ts */
+      --bg: #000000;
+      /* App pure black */
+      --surface: #111117;
+      /* App card */
+      --surface-2: #0B0B0F;
+      /* App cardSecondary */
+      --surface-3: #1A1A24;
+      /* App high-contrast surface */
+      --border: rgba(255, 255, 255, 0.06);
+      /* App border */
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --accent: #A78BFA;
+      /* App accent violet */
+      --accent-dim: rgba(167, 139, 250, 0.12);
+      --accent-glow: 0 0 40px rgba(167, 139, 250, 0.2);
+      --text: #FFFFFF;
+      --text-2: rgba(255, 255, 255, 0.65);
+      /* App subtext */
+      --text-3: rgba(255, 255, 255, 0.35);
+      --radius-card: 20px;
+      --radius-pill: 999px;
+      
+      /* Waitlist Input CSS Variables (Desktop defaults) */
+      --input-height: 100%;
+      --input-bg: none;
+      --input-border: none;
+      --input-radius: 0;
+      --input-padding: 0 16px;
+
+      /* Typography scale */
+      --font-display: clamp(40px, 6vw, 72px);
+      --font-h2: clamp(28px, 4vw, 44px);
+      --font-h3: 20px;
+      --font-body: 15px;
+      --font-caption: 11px;
+
+      /* Spacing scale */
+      --space-xs: 8px;
+      --space-sm: 16px;
+      --space-md: 24px;
+      --space-lg: 32px;
+      --space-xl: 48px;
+      --space-2xl: 64px;
+      --space-3xl: 96px;
+      --space-4xl: 128px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Grid dot background pattern */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Typography Defaults */
+    h1,
+    h2,
+    h3 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    p {
+      font-weight: 400;
+      line-height: 1.6;
+      font-size: var(--font-body);
+      color: var(--text-2);
+    }
+
+    .caption {
+      font-weight: 600;
+      font-size: var(--font-caption);
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-sm);
+      display: inline-block;
+    }
+
+    /* Layout Wrapper */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-xl);
+      position: relative;
+      z-index: 5;
+    }
+
+    /* Buttons & Badges */
+    .btn-primary {
+      background: #FFFFFF;
+      color: #000000;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 32px;
+      border-radius: var(--radius-pill);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: transform 0.2s, filter 0.2s;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(0.9);
+      transform: translateY(-1px);
+    }
+
+    .app-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 10px;
+      color: #FFFFFF;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .app-badge:hover {
+      border-color: var(--border-hover);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .app-badge i {
+      font-size: 24px;
+    }
+
+    .app-badge-text {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .app-badge-sub {
+      font-size: 8px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .app-badge-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      margin-top: 1px;
+    }
+
+    /* ---------------------------------- */
+    /* 2. SECTION 1 — NAVBAR              */
+    /* ---------------------------------- */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 80px;
+      z-index: 100;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
+    }
+
+    nav.scrolled {
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      user-select: none;
+      outline: none;
+    }
+
+    .logo:focus,
+    .logo:active {
+      outline: none;
+    }
+
+    .logo-img {
+      height: 22px;
+      width: auto;
+      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+      pointer-events: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 10px 22px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 600;
+      color: #FFFFFF;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #FFFFFF;
+    }
+
+    /* ---------------------------------- */
+    /* 3. SECTION 2 — HERO                */
+    /* ---------------------------------- */
+    .hero-section {
+      padding-top: 180px;
+      padding-bottom: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 1200px;
+      height: 600px;
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(167, 139, 250, 0.06) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 60px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    /* Loved badge */
+    .loved-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      margin-bottom: var(--space-md);
+    }
+
+    .loved-badge .stars {
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    .hero-left h1 {
+      font-size: var(--font-display);
+      line-height: 1.05;
+      margin-bottom: var(--space-md);
+    }
+
+    .hero-left h1 span.gradient {
+      background: linear-gradient(90deg, #FFFFFF 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-left .subtitle {
+      font-size: 18px;
+      color: var(--text-2);
+      max-width: 520px;
+      margin-bottom: var(--space-xl);
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: var(--space-xl);
+    }
+
+    /* Compact Email Form */
+    .signup-container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .signup-form {
+      display: flex;
+      align-items: center;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 4px;
+      width: 100%;
+      height: 48px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    #emailInputHero,
+    #emailInputCTA {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      padding: 0 16px;
+      font-size: 14px;
+      color: #FFFFFF;
+      background: none;
+      border: none;
+      outline: none;
+    }
+
+    .signup-form input::placeholder {
+      color: var(--text-3);
+    }
+
+    .signup-form button {
+      height: 100%;
+      background: var(--accent);
+      color: #000000;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 0 20px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: filter 0.2s, transform 0.2s;
+    }
+
+    .signup-form button:hover {
+      filter: brightness(0.9);
+      transform: translateY(-0.5px);
+    }
+
+    .success-panel {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      font-size: 14.5px;
+      font-weight: 500;
+    }
+
+    /* ---------------------------------- */
+    /* 4. OVERLAPPING DUAL-PHONE MOCKUP   */
+    /* ---------------------------------- */
+    .hero-right {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      height: 520px;
+      width: 100%;
+    }
+
+    .phone-shadow-glow {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 320px;
+      height: 100px;
+      background: rgba(167, 139, 250, 0.12);
+      filter: blur(40px);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Base Phone Wrapper */
+    .phone-wrapper {
+      position: relative;
+      width: 250px;
+      aspect-ratio: 9 / 19.5;
+      container-type: inline-size;
+    }
+
+    .hero-right .phone-wrapper {
+      position: absolute;
+    }
+
+    /* Phone 1: Foreground (Home View) */
+    .phone-foreground {
+      left: 60px;
+      bottom: 20px;
+      z-index: 10;
+      transform: rotate(-2deg);
+      animation: floatFore 6s ease-in-out infinite;
+    }
+
+    /* Phone 2: Background (Scan View) */
+    .phone-background {
+      left: 170px;
+      top: 10px;
+      z-index: 5;
+      transform: rotate(6deg) scale(0.92);
+      opacity: 0.85;
+      animation: floatBack 6s ease-in-out infinite;
+    }
+
+    @keyframes floatFore {
+
+      0%,
+      100% {
+        transform: rotate(-2deg) translateY(0);
+      }
+
+      50% {
+        transform: rotate(-2deg) translateY(-10px);
+      }
+    }
+
+    @keyframes floatBack {
+
+      0%,
+      100% {
+        transform: rotate(6deg) scale(0.92) translateY(0);
+      }
+
+      50% {
+        transform: rotate(6deg) scale(0.92) translateY(-8px);
+      }
+    }
+
+    /* iPhone 16 Pro Max / 17 Premium Frame */
+    .phone-mockup {
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      border-radius: 40px;
+      border: 6px solid #151518;
+      /* Ultra-thin bezel of iPhone 16 Pro Max */
+      outline: 1.5px solid rgba(255, 255, 255, 0.08);
+      outline-offset: -1px;
+      box-shadow:
+        0 30px 70px -15px rgba(0, 0, 0, 0.95),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Screen glare reflection */
+    .phone-mockup::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 50%);
+      pointer-events: none;
+      z-index: 90;
+    }
+
+    /* Side Button Hardware Details */
+    .phone-wrapper::before,
+    .phone-wrapper::after {
+      content: '';
+      position: absolute;
+      background: #151518;
+      border-radius: 2px;
+      z-index: -1;
+    }
+
+    /* Volume buttons on left */
+    .phone-wrapper::before {
+      left: -8px;
+      top: 80px;
+      width: 2px;
+      height: 32px;
+      box-shadow: 0 45px 0 #151518;
+    }
+
+    /* Power button on right */
+    .phone-wrapper::after {
+      right: -8px;
+      top: 100px;
+      width: 2px;
+      height: 48px;
+    }
+
+    .phone-island {
+      width: 76px;
+      height: 20px;
+      background: #000000;
+      border-radius: 10px;
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      border: 0.5px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 6px;
+    }
+
+    /* Active camera green dot */
+    .phone-island::after {
+      content: '';
+      width: 3px;
+      height: 3px;
+      background: #34C759;
+      border-radius: 50%;
+      opacity: 0.3;
+    }
+
+    /* Home Indicator */
+    .phone-home-indicator {
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3.5px;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .phone-screen {
+      flex: 1;
+      background: #000000;
+      padding: 12px 12px 0px;
+      /* Full-width tab bar aligns to bottom of padding */
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      font-size: 10.5px;
+    }
+
+    /* Phone Status Bar */
+    .phone-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #FFFFFF;
+      font-size: 9px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding: 0 10px;
+      margin-top: 14px;
+      z-index: 95;
+    }
+
+    .phone-status-right {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+    }
+
+    /* macOS Xcode-style Simulator Window */
+    .mac-simulator-window {
+      width: 100%;
+      background: #18181B;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 30px 60px -15px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mac-simulator-header {
+      height: 30px;
+      background: #202024;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+      user-select: none;
+    }
+
+    .mac-window-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .mac-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .mac-dot.close {
+      background: #FF5F56;
+    }
+
+    .mac-dot.minimize {
+      background: #FFBD2E;
+    }
+
+    .mac-dot.expand {
+      background: #27C93F;
+    }
+
+    .mac-simulator-title {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #E4E4E7;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .mac-simulator-title span {
+      color: #71717A;
+      font-weight: 400;
+      font-size: 8.5px;
+    }
+
+    .mac-simulator-actions {
+      display: flex;
+      gap: 12px;
+      color: #71717A;
+      font-size: 11px;
+    }
+
+    .mac-simulator-actions i {
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .mac-simulator-actions i:hover {
+      color: #A1A1AA;
+    }
+
+    .mac-simulator-body {
+      background: #09090B;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Phone Cards */
+    .mock-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    .mock-card .caption {
+      font-size: 8px;
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .phone-greeting {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .phone-greeting h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .phone-greeting p {
+      font-size: 8px;
+      color: var(--text-2);
+    }
+
+    .phone-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--surface-3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Health Score Card */
+    .score-hero {
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+      margin: 2px 0;
+    }
+
+    .score-hero h2 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .score-hero span {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .score-trend {
+      font-size: 9px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .score-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 0;
+    }
+
+    .score-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .score-stat-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .score-stat-lbl {
+      font-size: 7px;
+      color: var(--text-3);
+      text-transform: uppercase;
+    }
+
+    .score-stat-val {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    /* Evolution Card Body Scanner */
+    .mock-scanner-container {
+      position: relative;
+      width: 42px;
+      height: 76px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .mock-scan-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      top: 0;
+      animation: mockLaserSweep 3s ease-in-out infinite;
+    }
+
+    @keyframes mockLaserSweep {
+      0% {
+        top: 0%;
+      }
+
+      50% {
+        top: 100%;
+      }
+
+      100% {
+        top: 0%;
+      }
+    }
+
+    /* Evolution Card */
+    .phone-evo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .phone-evo-figure {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+    }
+
+    .phone-evo-meta {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .phone-evo-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .phone-evo-stage {
+      font-size: 8.5px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .phone-xp-container {
+      margin-top: 4px;
+    }
+
+    .phone-xp-bar {
+      height: 3.5px;
+      background: var(--surface-3);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 3px;
+    }
+
+    .phone-xp-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 40%;
+      border-radius: 2px;
+    }
+
+    .phone-xp-txt {
+      font-size: 7.5px;
+      color: var(--text-2);
+    }
+
+    /* Real App Bottom Tab Bar Style */
+    .phone-tabbar {
+      height: 52px;
+      border-top: 1px solid #222222;
+      /* App borderTopColor */
+      background: #000000;
+      /* App backgroundColor */
+      margin-top: auto;
+      margin-left: -12px;
+      margin-right: -12px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding-bottom: 8px;
+      /* Spacing below icons */
+      z-index: 95;
+    }
+
+    .phone-tab-icon {
+      font-size: 18px;
+      color: #555555;
+      /* App InactiveTintColor */
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .phone-tab-icon:hover {
+      color: var(--text-2);
+    }
+
+    .phone-tab-icon.active {
+      color: var(--accent);
+      /* App ActiveTintColor (#A78BFA) */
+    }
+
+    /* Camera Viewfinder UI */
+    .mock-viewfinder {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      background: #111115;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .viewfinder-grid-h1,
+    .viewfinder-grid-h2,
+    .viewfinder-grid-v1,
+    .viewfinder-grid-v2 {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .viewfinder-grid-h1 {
+      top: 33.33%;
+      left: 0;
+      width: 100%;
+      height: 0.5px;
+    }
+
+    .viewfinder-grid-h2 {
+      top: 66.66%;
+      left: 0;
+      width: 100%;
+      height: 0.5px;
+    }
+
+    .viewfinder-grid-v1 {
+      left: 33.33%;
+      top: 0;
+      height: 100%;
+      width: 0.5px;
+    }
+
+    .viewfinder-grid-v2 {
+      left: 66.66%;
+      top: 0;
+      height: 100%;
+      width: 0.5px;
+    }
+
+    .viewfinder-focus {
+      width: 36px;
+      height: 36px;
+      border: 1px solid #FFCC00;
+      position: absolute;
+      border-radius: 4px;
+      opacity: 0.35;
+    }
+
+    .viewfinder-preview-img {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .viewfinder-overlay-text {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 16px;
+    }
+
+    .camera-bottom-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 12px 6px;
+    }
+
+    .camera-gallery-preview {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: #111115;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .camera-shutter-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 3px solid #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .camera-shutter-inner {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      transition: transform 0.1s;
+    }
+
+    .camera-shutter-btn:active .camera-shutter-inner {
+      transform: scale(0.9);
+    }
+
+    .camera-flip-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 12px;
+    }
+
+    /* Floating Callouts */
+    .floating-callout {
+      position: absolute;
+      background: rgba(17, 17, 23, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .floating-callout.c1 {
+      top: 100px;
+      left: -40px;
+    }
+
+    .floating-callout.c2 {
+      bottom: 120px;
+      left: -70px;
+    }
+
+    .floating-callout.c3 {
+      top: 180px;
+      right: -50px;
+    }
+
+    /* ---------------------------------- */
+    /* 5. SECTION 3 — WHAT FITAPP INCLUDES */
+    /* ---------------------------------- */
+    .includes-section {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+      background: #000000;
+    }
+
+    .includes-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 80px;
+      align-items: center;
+      margin-top: var(--space-2xl);
+    }
+
+    .includes-left {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .includes-right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: left;
+    }
+
+    /* Feature card */
+    .includes-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .includes-card:hover {
+      transform: translateY(-6px) scale(1.015);
+      border-color: rgba(167, 139, 250, 0.35);
+      background: var(--surface-3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
+                  0 0 30px rgba(167, 139, 250, 0.15);
+    }
+
+    .includes-icon-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .includes-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .includes-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .includes-card p {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    /* ---------------------------------- */
+    /* 6. SECTION 4 — WHY CHOOSE FITAPP    */
+    /* ---------------------------------- */
+    .why-section {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+      background: #000000;
+      text-align: center;
+    }
+
+    .section-header {
+      max-width: 600px;
+      margin: 0 auto var(--space-3xl);
+    }
+
+    .section-header h2 {
+      font-size: var(--font-h2);
+      margin-bottom: var(--space-sm);
+    }
+
+    .section-header p {
+      font-size: 16px;
+      color: var(--text-2);
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .why-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: var(--space-xl) var(--space-lg);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-md);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .why-card:hover {
+      transform: translateY(-6px) scale(1.015);
+      border-color: rgba(167, 139, 250, 0.35);
+      background: var(--surface-3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
+                  0 0 30px rgba(167, 139, 250, 0.15);
+    }
+
+    .why-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--accent);
+    }
+
+    .why-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .why-card p {
+      font-size: 14px;
+      color: var(--text-2);
+    }
+
+    /* ---------------------------------- */
+    /* 7. SECTION 5 — INTERACTIVE DEMO   */
+    /* ---------------------------------- */
+    .demo-section {
+      padding: var(--space-4xl) 0;
+      background: #050508;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .demo-left {
+      text-align: left;
+    }
+
+    .demo-left h2 {
+      font-size: var(--font-h2);
+      margin-bottom: var(--space-sm);
+    }
+
+    .demo-left p {
+      margin-bottom: var(--space-xl);
+    }
+
+    /* Presets list */
+    .demo-presets {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: var(--space-xl);
+    }
+
+    .preset-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .preset-row:hover {
+      border-color: var(--border-hover);
+    }
+
+    .preset-row.selected {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    .preset-thumb {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .preset-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preset-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .preset-sub {
+      font-size: 12.5px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    .demo-action-btn {
+      width: 100%;
+      max-width: 320px;
+      background: #FFFFFF;
+      color: #000000;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px;
+      border-radius: var(--radius-pill);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: filter 0.2s;
+    }
+
+    .demo-action-btn:hover {
+      filter: brightness(0.9);
+    }
+
+    /* ---------------------------------- */
+    /* 8. SIMULATOR PHONE CARD            */
+    /* ---------------------------------- */
+    .sim-phone-wrapper {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .sim-phone {
+      width: 270px;
+      aspect-ratio: 9 / 19.5;
+      background: #000000;
+      border-radius: 44px;
+      border: 12px solid #1C1C1E;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.9);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .sim-phone-screen {
+      height: 100%;
+      background: #000000;
+      padding: 24px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      font-size: 11px;
+    }
+
+    /* Toast Overlay */
+    .sim-toast {
+      position: absolute;
+      top: 44px;
+      left: 12px;
+      right: 12px;
+      background: rgba(17, 17, 23, 0.95);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      z-index: 102;
+    }
+
+    .sim-toast.visible {
+      display: flex;
+    }
+
+    .sim-toast-icon {
+      font-size: 14px;
+    }
+
+    .sim-toast-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      text-align: left;
+    }
+
+    .sim-toast-sub {
+      font-size: 8px;
+      color: var(--text-2);
+      text-align: left;
+    }
+
+    /* Laser Overlay */
+    .sim-laser-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.96);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sim-laser-overlay.active {
+      display: flex;
+    }
+
+    .sim-laser-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+      top: 0;
+      animation: simLaserSweep 2s ease-in-out infinite;
+    }
+
+    @keyframes simLaserSweep {
+      0% {
+        top: 0%;
+      }
+
+      50% {
+        top: 100%;
+      }
+
+      100% {
+        top: 0%;
+      }
+    }
+
+    .sim-laser-text {
+      font-size: 11px;
+      color: #FFFFFF;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+
+    /* Macro Popup */
+    .sim-macro-popup {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 101;
+      display: none;
+      padding: 14px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sim-macro-popup.active {
+      display: flex;
+    }
+
+    .sim-macro-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .sim-macro-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 10px;
+    }
+
+    .sim-macro-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 0;
+      margin-bottom: 12px;
+    }
+
+    .sim-macro-val {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .sim-macro-val.cal {
+      color: var(--accent);
+    }
+
+    .sim-macro-lbl {
+      font-size: 8px;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    .sim-macro-close {
+      background: var(--surface-3);
+      color: #FFFFFF;
+      border: 1px solid var(--border);
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    /* App Views */
+    .app-view {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .app-view.active {
+      display: flex;
+    }
+
+    .app-view::-webkit-scrollbar {
+      display: none;
+    }
+
+    .app-view {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .app-header-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .app-header-sub {
+      font-size: 9px;
+      color: var(--text-2);
+      display: block;
+    }
+
+    .app-header-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--surface-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Missions List */
+    .mission-header-row {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+
+    .mission-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mission-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: left;
+    }
+
+    .mission-item.completed {
+      opacity: 0.5;
+    }
+
+    .mission-title {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .mission-sub {
+      font-size: 8.5px;
+      color: var(--text-2);
+      display: block;
+    }
+
+    .mission-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mission-xp {
+      font-size: 8.5px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .mission-check-btn {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: transparent;
+      cursor: pointer;
+    }
+
+    .mission-item.completed .mission-check-btn {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000000;
+    }
+
+    /* ---------------------------------- */
+    /* 9. SECTION 6 — FAQ ACCORDION       */
+    /* ---------------------------------- */
+    .faq-section {
+      padding: 120px 0;
+      border-top: 1px solid var(--border);
+      background: #000000;
+    }
+
+    .faq-container {
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-question {
+      padding: 22px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .faq-question i {
+      font-size: 16px;
+      color: var(--text-3);
+      transition: transform 0.3s;
+    }
+
+    .faq-item.active .faq-question i {
+      transform: rotate(180deg);
+      color: var(--accent);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      color: var(--text-2);
+      font-size: 14.5px;
+      line-height: 1.6;
+    }
+
+    .faq-answer p {
+      padding-bottom: 22px;
+    }
+
+    /* ---------------------------------- */
+    /* 10. SECTION 7 — FINAL CTA          */
+    /* ---------------------------------- */
+    .cta-section {
+      padding: 120px 0;
+      background: #000000;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .cta-banner {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-banner h2 {
+      font-size: var(--font-h2);
+      margin-bottom: var(--space-sm);
+    }
+
+    .cta-banner p {
+      font-size: 16px;
+      color: var(--text-2);
+      margin-bottom: var(--space-xl);
+    }
+
+    /* ---------------------------------- */
+    /* 11. FOOTER                         */
+    /* ---------------------------------- */
+    footer {
+      background: #000000;
+      border-top: 1px solid var(--border);
+      padding: 32px 80px;
+      font-size: 13px;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p,
+    footer a {
+      color: var(--text-3);
+      text-decoration: none;
+      transition: color 0.2s;
+      font-weight: 400;
+      margin: 0;
+      font-size: 13px !important;
+    }
+
+    footer a:hover {
+      color: #FFFFFF;
+    }
+
+    /* ---------------------------------- */
+    /* 12. RESPONSIVE BREAKPOINT (< 768px)*/
+    /* ---------------------------------- */
+    @media (max-width: 767px) {
+      :root {
+        --input-height: 48px;
+        --input-bg: rgba(255, 255, 255, 0.03);
+        --input-border: 1.5px solid rgba(255, 255, 255, 0.08);
+        --input-radius: 12px;
+        --input-padding: 0 18px;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+      .bg-glow {
+        display: none !important;
+      }
+
+      nav.scrolled {
+        background: #000000;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      /* Navbar */
+      nav {
+        padding: 0 24px;
+        height: 60px;
+      }
+
+      /* Hero Section */
+      .hero-section {
+        padding-top: 100px;
+        padding-bottom: 60px;
+      }
+
+      .hero-left h1 {
+        font-size: 36px !important;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+
+      .hero-left .subtitle {
+        font-size: 15px !important;
+        line-height: 1.5;
+        margin-bottom: var(--space-xl);
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-btn {
+        font-size: 12px;
+        padding: 8px 16px;
+      }
+
+      /* Hero Section */
+      .hero-section {
+        padding-top: 100px;
+        padding-bottom: 60px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+      }
+
+      .hero-left {
+        align-items: center;
+        text-align: center;
+      }
+
+      .hero-left .subtitle {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .badge-row {
+        justify-content: center;
+      }
+
+      .signup-container {
+        max-width: 340px;
+        margin: 0 auto;
+      }
+
+      .signup-form {
+        flex-direction: column !important;
+        height: auto !important;
+        gap: 12px !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+
+      #emailInputHero,
+      #emailInputCTA {
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        display: block !important;
+        width: 100% !important;
+        height: 48px !important;
+        min-height: 48px !important;
+        flex-shrink: 0 !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px !important;
+        padding: 0 18px !important;
+        font-size: 14px !important;
+        text-align: center !important;
+        color: #FFFFFF !important;
+        transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      #emailInputHero:focus,
+      #emailInputCTA:focus {
+        border-color: var(--accent) !important;
+        background: rgba(255, 255, 255, 0.06) !important;
+        box-shadow: 0 0 16px rgba(167, 139, 250, 0.2) !important;
+        outline: none !important;
+      }
+
+      .signup-form button {
+        width: 100% !important;
+        height: 48px !important;
+        flex-shrink: 0 !important;
+        border-radius: 12px !important;
+        justify-content: center !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        padding: 0 !important;
+        box-shadow: 0 4px 15px rgba(167, 139, 250, 0.2) !important;
+        transition: transform 0.2s ease, filter 0.2s ease;
+      }
+
+      .signup-form button:active {
+        transform: scale(0.98) !important;
+      }
+
+      /* Hide Overlapping Phones / Show Single Mockup */
+      .hero-right {
+        height: auto;
+        align-items: center;
+      }
+
+      .hero-right .phone-wrapper {
+        position: relative !important;
+        margin: 0 auto;
+      }
+
+      .phone-background,
+      .floating-callout {
+        display: none !important;
+      }
+
+      .phone-foreground {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        margin: 0 auto;
+        transform: none !important;
+        animation: none !important;
+      }
+
+      /* What FitApp Includes */
+      .includes-section {
+        padding: 60px 24px;
+      }
+
+      .includes-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .includes-left {
+        order: 2;
+      }
+
+      .includes-left .sim-phone {
+        width: 200px;
+      }
+
+      .includes-right {
+        order: 1;
+      }
+
+      /* Why Choose FitApp */
+      .why-section {
+        padding: 60px 24px;
+      }
+
+      .section-header {
+        margin-bottom: var(--space-xl);
+      }
+
+      .why-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .why-card {
+        padding: 24px;
+      }
+
+      /* Interactive Demo */
+      .demo-section {
+        padding: 60px 24px;
+      }
+
+      .demo-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .demo-left {
+        text-align: center;
+      }
+
+      .demo-presets {
+        text-align: left;
+      }
+
+      .demo-action-btn {
+        max-width: 100%;
+      }
+
+      .sim-phone {
+        width: 200px;
+      }
+
+      /* FAQ */
+      .faq-section {
+        padding: 60px 24px;
+      }
+
+      .faq-question {
+        font-size: 15px;
+      }
+
+      /* CTA */
+      .cta-section {
+        padding: 80px 24px;
+      }
+
+      /* Footer */
+      footer {
+        padding: 24px;
+      }
+
+      .footer-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="scroll-sentinel"
+    style="position: absolute; top: 0; left: 0; right: 0; height: 1px; pointer-events: none; z-index: 9999;"></div>
+
+  <!-- Navigation Bar -->
+  <nav id="nav">
+    <a href="/" class="logo">
+      <svg class="logo-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95 24">
+        <text x="0" y="18" font-family="'Inter', sans-serif" font-weight="900" font-size="18" fill="#FFFFFF"
+          letter-spacing="1.5">FITAPP</text>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#comparison">Comparison</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a href="#waitlist" class="nav-btn">Early Access</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-glow"></div>
+    <div class="container hero-grid">
+
+      <!-- Left Column (Branding & Value Prop) -->
+      <div class="hero-left">
+        <div class="loved-badge"
+          style="background: rgba(167, 139, 250, 0.06); border-color: rgba(167, 139, 250, 0.15); color: var(--accent);">
+          ✦ Private Beta Waitlist
+        </div>
+
+        <h1>
+          Your health.<br>
+          <span class="gradient">Brutally honest.</span>
+        </h1>
+
+        <p class="subtitle">
+          Track your food with just a picture, level up your avatar, and get roasted by Future You for your lifestyle
+          choices.
+        </p>
+
+
+        <!-- Waitlist Signup -->
+        <div class="signup-container">
+          <div class="signup-form" id="emailFormHero">
+            <input type="email" id="emailInputHero" placeholder="Your email..." />
+            <button onclick="handleWaitlistSubmit('Hero')">Notify Me <i class="ph-bold ph-arrow-right"></i></button>
+          </div>
+          <div class="success-panel" id="successMsgHero">
+            <i class="ph-bold ph-check-circle" style="font-size: 20px;"></i>
+            <span>Waitlist confirmed. Get ready to be roasted.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column (Overlapping Phone Mockups) -->
+      <div class="hero-right">
+        <div class="phone-shadow-glow"></div>
+
+        <!-- Floating Callouts -->
+        <div class="floating-callout c1">
+          <i class="ph-fill ph-shield-check" style="color: var(--accent);"></i>
+          <span>10 Health Score</span>
+        </div>
+        <div class="floating-callout c2">
+          <i class="ph-fill ph-target" style="color: var(--accent);"></i>
+          <span>Hit Protein Target (+50 XP)</span>
+        </div>
+        <div class="floating-callout c3">
+          <i class="ph-fill ph-sparkle" style="color: var(--accent);"></i>
+          <span>AI Roast: "Your liver is screaming..."</span>
+        </div>
+
+        <!-- Phone 2 (Background - Scan View) -->
+        <div class="phone-wrapper phone-background">
+          <div class="phone-mockup">
+            <div class="phone-island"></div>
+            <div class="phone-screen">
+              <div class="phone-status-bar">
+                <span>9:41</span>
+                <div class="phone-status-right">
+                  <span>●●●</span>
+                  <span>🔋</span>
+                </div>
+              </div>
+
+              <!-- Wrap content in active view so it scrolls and fits perfectly -->
+              <div class="app-view active" style="padding-bottom: 12px;">
+                <!-- AI Scanner Header -->
+                <div class="app-header">
+                  <div class="app-header-left">
+                    <span class="app-header-title">AI Scanner</span>
+                  </div>
+                </div>
+
+                <!-- Logged Food Card -->
+                <div class="mock-card">
+                  <span class="caption">MEAL LOG DATA</span>
+                  <h4 style="font-size: 11px; margin-bottom: 6px; font-weight: 700; color: #FFFFFF;">Snack & Energy
+                    Drink</h4>
+                  <div class="score-stats-grid" style="grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                    <div class="score-stat-box">
+                      <span class="score-stat-lbl">kcal</span>
+                      <span class="score-stat-val" style="color: var(--accent);">520</span>
+                    </div>
+                    <div class="score-stat-box">
+                      <span class="score-stat-lbl">pro</span>
+                      <span class="score-stat-val">4g</span>
+                    </div>
+                    <div class="score-stat-box">
+                      <span class="score-stat-lbl">carbs</span>
+                      <span class="score-stat-val">72g</span>
+                    </div>
+                    <div class="score-stat-box">
+                      <span class="score-stat-lbl">fat</span>
+                      <span class="score-stat-val">24g</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- AI Roast Card -->
+                <div class="mock-card" style="background: var(--surface-2); border-color: rgba(167, 139, 250, 0.15);">
+                  <div class="phone-evo-row" style="margin-bottom: 4px;">
+                    <i class="ph-bold ph-sparkle" style="color: var(--accent); font-size: 11px;"></i>
+                    <span class="phone-evo-title" style="font-size: 8.5px;">FUTURE YOU ROAST</span>
+                  </div>
+                  <p style="font-size: 8px; color: var(--text-2); line-height: 1.3;">
+                    "Your liver is screaming for help and your heart rate is currently a drum solo."
+                  </p>
+                </div>
+              </div>
+
+              <!-- Tab Bar (Matching React Native App) -->
+              <div class="phone-tabbar">
+                <i class="ph-bold ph-house phone-tab-icon"></i>
+                <i class="ph-bold ph-book-open phone-tab-icon"></i>
+                <i class="ph-fill ph-scan phone-tab-icon active"></i>
+                <i class="ph-bold ph-trophy phone-tab-icon"></i>
+                <i class="ph-bold ph-users phone-tab-icon"></i>
+              </div>
+
+            </div>
+            <div class="phone-home-indicator"></div>
+          </div>
+        </div>
+
+        <!-- Phone 1 (Foreground - Home View) -->
+        <div class="phone-wrapper phone-foreground">
+          <div class="phone-mockup">
+            <div class="phone-island"></div>
+            <div class="phone-screen">
+              <div class="phone-status-bar">
+                <span>9:41</span>
+                <div class="phone-status-right">
+                  <span>●●●</span>
+                  <span>🔋</span>
+                </div>
+              </div>
+
+              <!-- Wrap content in active view so it scrolls and fits perfectly -->
+              <div class="app-view active" style="padding-bottom: 12px;">
+                <!-- Greeting -->
+                <div class="phone-greeting"
+                  style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <h4 style="font-size: 13px; font-weight: 800; color: #FFFFFF; margin: 0;">Good Afternoon, Olly 👋
+                    </h4>
+                    <p
+                      style="font-size: 8px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.03em; margin: 2px 0 0 0; font-weight: 500;">
+                      Sunday, June 28</p>
+                  </div>
+                  <div class="phone-avatar"
+                    style="width: 26px; height: 26px; border-radius: 50%; background: #111117; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-weight: 600; color: #FFFFFF; font-size: 10px;">
+                    O</div>
+                </div>
+
+                <!-- Health Score Card -->
+                <div class="mock-card" style="padding: 12px; margin-bottom: 10px;">
+                  <span class="caption"
+                    style="font-size: 7.5px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">HEALTH
+                    SCORE</span>
+                  <div class="score-hero" style="display: flex; align-items: baseline; margin-bottom: 4px;">
+                    <h2 style="font-size: 32px; font-weight: 800; color: #FFFFFF; margin: 0;">10</h2>
+                    <span style="font-size: 11px; color: var(--text-3); font-weight: 500; margin-left: 2px;">/
+                      100</span>
+                  </div>
+                  <div class="score-trend" style="font-size: 8.5px; color: var(--text-2); margin-bottom: 8px;">+10 vs
+                    yesterday • Top 34% today</div>
+                  <div class="score-divider"
+                    style="height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 8px;"></div>
+
+                  <!-- 2x2 Metrics Grid -->
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px;">
+                    <div>
+                      <span
+                        style="font-size: 8px; color: var(--text-3); text-transform: uppercase; display: block; margin-bottom: 1px; font-weight: 600; letter-spacing: 0.02em;">Nutrition</span>
+                      <span style="font-size: 11px; font-weight: 700; color: #FFFFFF; display: block;">0/35</span>
+                      <span style="font-size: 7px; color: var(--text-3); display: block; margin-top: 1px;">0/2350
+                        kcal</span>
+                    </div>
+                    <div>
+                      <span
+                        style="font-size: 8px; color: var(--text-3); text-transform: uppercase; display: block; margin-bottom: 1px; font-weight: 600; letter-spacing: 0.02em;">Movement</span>
+                      <span style="font-size: 11px; font-weight: 700; color: #FFFFFF; display: block;">0/30</span>
+                      <span style="font-size: 7px; color: var(--text-3); display: block; margin-top: 1px;">🔥 1
+                        kcal</span>
+                    </div>
+                    <div>
+                      <span
+                        style="font-size: 8px; color: var(--text-3); text-transform: uppercase; display: block; margin-bottom: 1px; font-weight: 600; letter-spacing: 0.02em;">Sleep</span>
+                      <span style="font-size: 10px; font-weight: 700; color: #FFFFFF; display: block;">Data
+                        Unavailable</span>
+                    </div>
+                    <div>
+                      <span
+                        style="font-size: 8px; color: var(--text-3); text-transform: uppercase; display: block; margin-bottom: 1px; font-weight: 600; letter-spacing: 0.02em;">Recovery</span>
+                      <span style="font-size: 11px; font-weight: 700; color: #FFFFFF; display: block;">10/10</span>
+                    </div>
+                  </div>
+
+                  <div
+                    style="text-align: center; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                    <span
+                      style="font-size: 8.5px; color: var(--accent); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 2px;">View
+                      Details <i class="ph-bold ph-caret-right" style="font-size: 7px;"></i></span>
+                  </div>
+                </div>
+
+                <!-- Evolution Card -->
+                <div class="mock-card" style="padding: 10px; margin-bottom: 10px;">
+                  <span class="caption"
+                    style="font-size: 7.5px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 6px;">EVOLUTION</span>
+                  <div class="phone-evo-row" style="display: flex; align-items: center; gap: 12px;">
+                    <!-- Body Scanner Graphic -->
+                    <div class="mock-scanner-container"
+                      style="position: relative; width: 32px; height: 64px; background: rgba(255,255,255,0.02); border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(255,255,255,0.05);">
+                      <svg width="24" height="48" viewBox="0 0 100 200" style="display: block;">
+                        <path d="M 50 12 C 53 12, 56 15, 56 18 C 56 21, 53 24, 50 24 C 47 24, 44 21, 44 18 C 44 15, 47 12, 50 12 Z 
+                                 M 47 26 L 53 26 L 55 37 L 45 37 Z 
+                                 M 38 40 L 62 40 C 64 60, 58 77, 62 107 L 38 107 C 42 77, 36 60, 38 40 Z
+                                 M 35 42 L 30 87 L 31 107
+                                 M 65 42 L 70 87 L 69 107
+                                 M 42 107 L 42 152 L 38 197
+                                 M 58 107 L 58 152 L 62 197" fill="none" stroke="rgba(167, 139, 250, 0.25)"
+                          stroke-width="5" stroke-linejoin="round" stroke-linecap="round" />
+                        <path d="M 50 12 C 53 12, 56 15, 56 18 C 56 21, 53 24, 50 24 C 47 24, 44 21, 44 18 C 44 15, 47 12, 50 12 Z 
+                                 M 47 26 L 53 26 L 55 37 L 45 37 Z 
+                                 M 38 40 L 62 40 C 64 60, 58 77, 62 107 L 38 107 C 42 77, 36 60, 38 40 Z
+                                 M 35 42 L 30 87 L 31 107
+                                 M 65 42 L 70 87 L 69 107
+                                 M 42 107 L 42 152 L 38 197
+                                 M 58 107 L 58 152 L 62 197" fill="none" stroke="var(--accent)" stroke-width="1.8"
+                          stroke-linejoin="round" stroke-linecap="round" />
+                      </svg>
+                      <div class="mock-scan-line"
+                        style="position: absolute; left: 0; width: 100%; height: 2px; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: scan 2s linear infinite;">
+                      </div>
+                    </div>
+
+                    <!-- Level info -->
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="phone-evo-title" style="font-size: 11px; font-weight: 700; color: #FFFFFF;">Level
+                          1</span>
+                        <span class="phone-evo-stage"
+                          style="font-size: 8.5px; color: var(--accent); font-weight: 600;">Stage: Egg 🥚</span>
+                      </div>
+                      <div class="phone-xp-container" style="margin-top: 1px;">
+                        <div class="phone-xp-bar"
+                          style="height: 3.5px; background: var(--surface-3); border-radius: 2px; overflow: hidden; margin-bottom: 2px;">
+                          <div class="phone-xp-fill"
+                            style="width: 40%; height: 100%; background: var(--accent); border-radius: 2px;"></div>
+                        </div>
+                        <div
+                          style="display: flex; justify-content: space-between; align-items: center; font-size: 7.5px; color: var(--text-3);">
+                          <span>40 / 100 XP</span>
+                          <span>Multiplier: 1.0x</span>
+                        </div>
+                      </div>
+                      <div style="font-size: 7.5px; color: var(--text-3); font-style: italic; margin-top: 2px;">
+                        Next Evolution: Hatchling 🐣 at Level 5
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Today's Missions -->
+                <div
+                  style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; margin-bottom: 4px; padding: 0 2px;">
+                  <span
+                    style="font-size: 8px; font-weight: 700; color: var(--text-3); letter-spacing: 0.05em; text-transform: uppercase;">Today's
+                    Missions</span>
+                  <span style="font-size: 8px; color: var(--text-3); font-weight: 500;">1 / 6 Completed 17%</span>
+                </div>
+                <div
+                  style="height: 2.5px; background: var(--surface-3); border-radius: 1px; margin-bottom: 8px; overflow: hidden; position: relative;">
+                  <div style="width: 17%; height: 100%; background: var(--accent); border-radius: 1px;"></div>
+                </div>
+
+                <!-- Mission List -->
+                <div class="mission-list" style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px;">
+                  <div class="mission-item"
+                    style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <span style="font-size: 9px; font-weight: 700; color: #FFFFFF; display: block;">Walk 10,000
+                        Steps</span>
+                      <span style="font-size: 7.5px; color: var(--text-3); display: block; margin-top: 1px;">74 / 10,000
+                        steps</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <span style="font-size: 8px; color: var(--accent); font-weight: 600;">+45 XP</span>
+                      <div
+                        style="width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 8px; color: var(--text-3);">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Tab Bar (Matching React Native App) -->
+              <div class="phone-tabbar">
+                <i class="ph-fill ph-house phone-tab-icon active"></i>
+                <i class="ph-bold ph-book-open phone-tab-icon"></i>
+                <i class="ph-bold ph-scan phone-tab-icon"></i>
+                <i class="ph-bold ph-trophy phone-tab-icon"></i>
+                <i class="ph-bold ph-users phone-tab-icon"></i>
+              </div>
+
+            </div>
+            <div class="phone-home-indicator"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section 2: What FitApp Includes -->
+  <section class="includes-section" id="features">
+    <div class="container includes-grid">
+
+      <!-- Left Column (Future You Forecast Phone Screen) -->
+      <div class="includes-left">
+        <div class="phone-wrapper" style="margin: 0 auto;">
+          <div class="phone-mockup">
+            <div class="phone-island"></div>
+            <div class="phone-screen">
+              <!-- Status Bar -->
+              <div class="phone-status-bar">
+                <span>9:41</span>
+                <div class="phone-status-right">
+                  <i class="ph-bold ph-chart-bar-horizontal" style="font-size: 8px;"></i>
+                  <i class="ph-bold ph-wifi-high" style="font-size: 8px;"></i>
+                  <i class="ph-bold ph-battery-full" style="font-size: 9px;"></i>
+                </div>
+              </div>
+
+              <!-- Wrap content in active view so it scrolls and fits perfectly -->
+              <div class="app-view active" style="padding-bottom: 12px;">
+                <div class="app-header">
+                  <div class="app-header-left">
+                    <span class="app-header-title">Future You</span>
+                    <span class="app-header-sub">10-Day Projections</span>
+                  </div>
+                </div>
+
+                <div style="text-align: center; margin: 12px 0 20px;">
+                  <span
+                    style="font-size: 9px; font-weight: 700; color: var(--accent); letter-spacing: 0.05em; text-transform: uppercase;"><i
+                      class="ph-bold ph-arrow-up-right" style="font-size: 8px; margin-right: 2px;"></i> Improving</span>
+                  <span
+                    style="font-size: 8px; color: var(--text-3); display: block; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Projected
+                    Change</span>
+                  <div style="font-size: 54px; font-weight: 800; color: #FFFFFF; line-height: 1; margin: 4px 0;">+1
+                  </div>
+                  <span style="font-size: 9px; font-weight: 700; color: #FFFFFF; display: block;">Health Score
+                    Points</span>
+                  <span
+                    style="font-size: 8px; color: var(--text-2); display: block; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em;">Next
+                    10 Days</span>
+                  <span
+                    style="font-size: 7.5px; color: var(--text-3); display: block; margin-top: 2px; font-style: italic;">Based
+                    on your last 15 days.</span>
+                </div>
+
+                <!-- Forecast Card -->
+                <div class="mock-card"
+                  style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; margin-bottom: 10px;">
+                  <div>
+                    <span
+                      style="font-size: 7.5px; color: var(--text-3); text-transform: uppercase; display: block; font-weight: 600;">Recent
+                      Average</span>
+                    <span
+                      style="font-size: 16px; font-weight: 800; color: #FFFFFF; display: block; margin-top: 2px;">21</span>
+                  </div>
+                  <i class="ph-bold ph-arrow-right" style="font-size: 14px; color: var(--text-3);"></i>
+                  <div style="text-align: right;">
+                    <span
+                      style="font-size: 7.5px; color: var(--accent); text-transform: uppercase; display: block; font-weight: 600;">Projected</span>
+                    <span
+                      style="font-size: 16px; font-weight: 800; color: var(--accent); display: block; margin-top: 2px;">22</span>
+                  </div>
+                </div>
+
+                <!-- Roast message -->
+                <div class="mock-card"
+                  style="background: var(--surface-2); border-color: rgba(167, 139, 250, 0.12); padding: 12px; margin-bottom: 10px;">
+                  <div class="phone-evo-row" style="margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                    <i class="ph-bold ph-sparkle" style="color: var(--accent); font-size: 10px;"></i>
+                    <span class="phone-evo-title"
+                      style="font-size: 8px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">Future
+                      You Says</span>
+                  </div>
+                  <p
+                    style="font-size: 9px; color: var(--text-2); line-height: 1.4; font-style: italic; margin: 0; border-left: 2px solid var(--accent); padding-left: 8px;">
+                    "Congrats on the 0% protein streak; are you photosynthesizing now?"
+                  </p>
+                </div>
+
+                <!-- Drivers list -->
+                <div class="mock-card" style="padding: 12px; margin-bottom: 10px;">
+                  <span
+                    style="font-size: 7.5px; color: var(--text-3); text-transform: uppercase; display: block; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 8px;">What's
+                    Driving Your Future?</span>
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <div
+                      style="display: flex; align-items: flex-start; gap: 6px; font-size: 8px; color: var(--text-2);">
+                      <span style="color: #FBBF24; flex-shrink: 0; font-size: 9px;">⚠️</span>
+                      <span>Protein target missed (1/1 days)</span>
+                    </div>
+                    <div
+                      style="display: flex; align-items: flex-start; gap: 6px; font-size: 8px; color: var(--text-2);">
+                      <span style="color: #FBBF24; flex-shrink: 0; font-size: 9px;">⚠️</span>
+                      <span>Calorie consistency is low (0% average)</span>
+                    </div>
+                    <div
+                      style="display: flex; align-items: flex-start; gap: 6px; font-size: 8px; color: var(--text-2);">
+                      <span style="color: #60A5FA; flex-shrink: 0; font-size: 9px;">ℹ️</span>
+                      <span>Activity consistency missed (23% adherence)</span>
+                    </div>
+                    <div
+                      style="display: flex; align-items: flex-start; gap: 6px; font-size: 8px; color: var(--text-2);">
+                      <span style="color: #FBBF24; flex-shrink: 0; font-size: 9px;">⚠️</span>
+                      <span>Sleep tracker not connected</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Tab Bar (Matching React Native App) -->
+              <div class="phone-tabbar">
+                <i class="ph-fill ph-house phone-tab-icon active"></i>
+                <i class="ph-bold ph-book-open phone-tab-icon"></i>
+                <i class="ph-bold ph-scan phone-tab-icon"></i>
+                <i class="ph-bold ph-trophy phone-tab-icon"></i>
+                <i class="ph-bold ph-users phone-tab-icon"></i>
+              </div>
+            </div>
+            <div class="phone-home-indicator"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column (Feature Explanations) -->
+      <div class="includes-right">
+        <span class="caption">Modules</span>
+        <h2 style="font-size: var(--font-h2); line-height: 1.1; margin-bottom: var(--space-sm);">What does FitApp
+          include?</h2>
+
+        <div class="includes-card">
+          <div class="includes-icon-row">
+            <div class="includes-icon"><i class="ph-duotone ph-camera"></i></div>
+            <h3>Track Your Health With Just a Picture</h3>
+          </div>
+          <p>Snap a photo of your food. Gemini AI parses ingredients, weights, and detailed macros in 5 seconds. No
+            manual searching needed.</p>
+        </div>
+
+        <div class="includes-card">
+          <div class="includes-icon-row">
+            <div class="includes-icon"><i class="ph-duotone ph-sparkle"></i></div>
+            <h3>Future You™ Predictions</h3>
+          </div>
+          <p>A forecasting engine calculating where your health and body score will stand in 10 days, based on today's
+            lifestyle decisions.</p>
+        </div>
+
+        <div class="includes-card">
+          <div class="includes-icon-row">
+            <div class="includes-icon"><i class="ph-duotone ph-shield-check"></i></div>
+            <h3>Evolving Avatar & XP Quests</h3>
+          </div>
+          <p>Your health metrics are directly mapped to a custom avatar. Earn XP for hitting daily quests to level up
+            and evolve.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section 3: Why Choose FitApp -->
+  <section class="why-section" id="comparison">
+    <div class="container">
+      <div class="section-header">
+        <span class="caption">Comparison</span>
+        <h2>Why choose FitApp?</h2>
+        <p>FitApp is the most advanced, brutally honest health tracker built for daily accountability.</p>
+      </div>
+
+      <div class="why-grid">
+        <!-- Card 1 -->
+        <div class="why-card">
+          <div class="why-icon"><i class="ph-bold ph-clock"></i></div>
+          <h3>Save your time</h3>
+          <p>No manual barcode scanning or catalog searching. Snap a photo, log the meal, and get back to your day.</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="why-card">
+          <div class="why-icon"><i class="ph-bold ph-target"></i></div>
+          <h3>Evolve your avatar</h3>
+          <p>Your habits are directly linked to your character. Complete daily quests, earn XP, and unlock stages.</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="why-card">
+          <div class="why-icon"><i class="ph-bold ph-users-three"></i></div>
+          <h3>Compete with friends</h3>
+          <p>Send 1v1 duel challenges based on nutrition or health scores. Keep each other accountable through
+            competition.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- FAQ Section -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="faq-container">
+        <span class="caption" style="display: block; text-align: center;">FAQ</span>
+        <h2 style="font-size: var(--font-h2); text-align: center; margin-bottom: var(--space-2xl);">Common Questions
+        </h2>
+
+        <!-- FAQ 1 -->
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span>Why is the AI roast so mean?</span>
+            <i class="ph-bold ph-caret-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Because typical fitness trackers tell you you're doing great even when you eat junk foods and skip sleep.
+              FitApp's AI is programmed to give you the raw, unfiltered truth inside the Future You forecast tab, keeping
+              you accountable by projecting the long-term impact of your current daily choices.</p>
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span>How does the 5-second scanner work?</span>
+            <i class="ph-bold ph-caret-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>We leverage Gemini multimodal AI models to visually parse your meal photo, estimating portion weight,
+              identifying ingredient ratios, and computing macro information (calories, protein, carbs, fat) in five
+              seconds. You can also scan barcodes or raw nutrition labels.</p>
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span>Does it sync with Apple Health?</span>
+            <i class="ph-bold ph-caret-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>Yes. FitApp hooks directly into Apple Health (HealthKit) to automatically import your active workouts,
+              steps count, and sleep duration. It uses this data to update your daily quest progress without requiring
+              manual entries.</p>
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            <span>When is the official release?</span>
+            <i class="ph-bold ph-caret-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>We are launching private iOS beta testing shortly. Sign up for our waitlist using the early access forms
+              on this landing page, and we will email you an invite link as soon as slots are available!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-section" id="waitlist">
+    <div class="container cta-banner">
+      <h2>Level up your body.</h2>
+      <p>Secure your spot on the private TestFlight beta waitlist. Confirm your email below to lock in early access.</p>
+
+      <div class="signup-container">
+        <div class="signup-form" id="emailFormCTA">
+          <input type="email" id="emailInputCTA" placeholder="Your email..." />
+          <button onclick="handleWaitlistSubmit('CTA')">Secure Early Access <i
+              class="ph-bold ph-arrow-right"></i></button>
+        </div>
+        <div class="success-panel" id="successMsgCTA">
+          <i class="ph-bold ph-check-circle" style="font-size: 20px;"></i>
+          <span>Waitlist confirmed. Get ready to evolve.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <p>© 2026 FitApp. All rights reserved.</p>
+      <a href="mailto:akshay@fitapp.app">akshay@fitapp.app</a>
+    </div>
+  </footer>
+
+  <!-- JavaScript Interaction Logic -->
+  <script>
+    // Header shadow on scroll using IntersectionObserver for 60fps mobile scrolling
+    const nav = document.getElementById('nav');
+    const sentinel = document.getElementById('scroll-sentinel');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        nav.classList.toggle('scrolled', !entry.isIntersecting);
+      });
+    }, { threshold: [1] });
+    if (sentinel) observer.observe(sentinel);
+
+    // Waitlist Form Handler
+    function handleWaitlistSubmit(type) {
+      const input = document.getElementById(`emailInput${type}`);
+      const email = input.value.trim();
+
+      if (!email || !email.includes('@')) {
+        input.style.color = 'var(--red)';
+        input.parentNode.style.borderColor = 'var(--red)';
+        setTimeout(() => {
+          input.style.color = '';
+          input.parentNode.style.borderColor = '';
+        }, 1200);
+        return;
+      }
+
+      document.getElementById(`emailForm${type}`).style.display = 'none';
+      document.getElementById(`successMsg${type}`).style.display = 'flex';
+
+      // Save to local waitlist database (backup)
+      const waitlist = JSON.parse(localStorage.getItem('fitapp_waitlist') || '[]');
+      waitlist.push({ email, joined_at: new Date().toISOString() });
+      localStorage.setItem('fitapp_waitlist', JSON.stringify(waitlist));
+
+      // Send to Supabase
+      fetch('https://your-supabase-project.supabase.co/rest/v1/waitlist', {
+        method: 'POST',
+        headers: {
+          'apikey': 'your-supabase-anon-key',
+          'Authorization': 'Bearer your-supabase-anon-key',
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          email: email
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          console.error('Error submitting to Supabase waitlist:', response.statusText);
+        }
+      })
+      .catch(error => {
+        console.error('Network error submitting to Supabase waitlist:', error);
+      });
+    }
+
+    // Enter key listener on inputs
+    ['Hero', 'CTA'].forEach(type => {
+      const input = document.getElementById(`emailInput${type}`);
+      if (input) {
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') handleWaitlistSubmit(type);
+        });
+      }
+    });
+
+    // Smooth scroll for nav links without changing URL hash
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          const navElement = document.getElementById('nav');
+          const navHeight = navElement ? navElement.offsetHeight : 80;
+          const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: targetPosition - navHeight,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Toggle FAQ Accordion
+    function toggleFaq(el) {
+      const parent = el.parentNode;
+      const answer = parent.querySelector('.faq-answer');
+      const isActive = parent.classList.contains('active');
+
+      document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('.faq-answer').style.maxHeight = null;
+      });
+
+      if (!isActive) {
+        parent.classList.add('active');
+        answer.style.maxHeight = answer.scrollHeight + "px";
+      }
+    }
+
+
+  </script>
+</body>
+
+</html>

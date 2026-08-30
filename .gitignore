@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Expo / React Native
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+/ios/Pods
+/android/build
+
+# Build / Transpiled output
+build/
+.next/
+out/
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+supabase/.temp/
+
+# OS / Editor Files
+.DS_Store
+*.pem
+*.key
+*.log
+.idea/
+.vscode/
